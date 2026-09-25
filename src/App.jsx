@@ -1,56 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import './Schedule.css';
+import { getApiKey, saveApiKey, clearApiKey, isAuthError } from './auth.js';
+import { apiGet } from './api.js';
+import LoginScreen from './LoginScreen.jsx';
 
 // Задаем интервал обновления в секундах (5 минут = 300 секунд)
 const UPDATE_INTERVAL_SEC = 300;
 
 function App() {
+  // X-API-Key из localStorage (с учётом срока действия 30 дней)
+  const [apiKey, setApiKeyState] = useState(() => getApiKey());
+
   const [scheduleData, setScheduleData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
-  
+
   // Состояние для обратного отсчета (в секундах)
   const [countdown, setCountdown] = useState(UPDATE_INTERVAL_SEC);
+
+  const isAuthed = Boolean(apiKey);
+
+  // Успешный вход: сохраняем ключ на 30 дней и показываем расписание
+  const handleLogin = (key) => {
+    saveApiKey(key);
+    setApiKeyState(key);
+  };
+
+  // Выход по кнопке пользователя
+  const handleLogout = () => {
+    clearApiKey();
+    setApiKeyState(null);
+    setScheduleData([]);
+    setError(null);
+  };
+
+  // Сброс авторизации: ключ не подходит (401/403) или истёк
+  const handleAuthFailure = () => {
+    clearApiKey();
+    setApiKeyState(null);
+    setScheduleData([]);
+    setError(null);
+  };
 
   // Функция запроса к серверу
   const fetchSchedule = async (isSilent = false) => {
     if (!isSilent) setLoading(true);
     try {
-      const response = await fetch('https://simple-schedule-api.soltusaa.ru/schedule/current-week', {
-        method: 'GET',
-        headers: {
-          'X-API-Key': 's94513383ec990b9d94387d9416fb33a6',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка сервера: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await apiGet('/schedule/current-week', apiKey);
       setScheduleData(data);
       setError(null);
-      
+
       const now = new Date();
       setLastUpdated(now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
       // Сбрасываем таймер обратно на 5 минут после успешного получения данных
-      setCountdown(UPDATE_INTERVAL_SEC); 
+      setCountdown(UPDATE_INTERVAL_SEC);
     } catch (err) {
-      setError(err.message);
+      if (isAuthError(err.status)) {
+        // API вернул 401/403 — ключ больше не подходит, просим ввести новый
+        handleAuthFailure();
+      } else {
+        setError(err.message);
+      }
     } finally {
       if (!isSilent) setLoading(false);
     }
   };
 
-  // Эффект для первоначальной загрузки данных
+  // Эффект для загрузки данных при авторизации (первичной и после входа)
   useEffect(() => {
-    fetchSchedule(false);
-  }, []);
+    if (apiKey) {
+      fetchSchedule(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiKey]);
 
   // Эффект для ежесекундного тикания визуального таймера
   useEffect(() => {
+    if (!apiKey) return undefined;
+
     const timerId = setInterval(() => {
       setCountdown((prevCount) => {
         if (prevCount <= 1) {
@@ -64,7 +92,8 @@ function App() {
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiKey]);
 
   // Функция форматирования секунд в красивый вид ММ:СС (например, 299 -> "04:59")
   const formatCountdown = (seconds) => {
@@ -81,10 +110,12 @@ function App() {
 
   const f_lower = (strD) => {//2222-22-22
     return strD.toLowerCase();
+  };
+
+  // Показываем экран входа, если нет действующего ключа
+  if (!isAuthed) {
+    return <LoginScreen onSuccess={handleLogin} />;
   }
-
-//timeLessonStr = (typeof lesson.lesson_number == "string")?" ":timeLesson[lesson.lesson_number];
-
 
   if (loading) {
     return (
@@ -103,56 +134,65 @@ function App() {
   }
 
   return (
-   
-    <div class="schedReS">
-      
-      {scheduleData.map((day) => (
-        <div key={day.date} className="day-container">
-
-
-          {day.lessons.length === 0 ? (
-            <table cellpadding="0px" cellspacing="0px" class="dayTable">
-              <tbody>
-                <tr>
-                  <td class="tdCapt" align="left" valign="middle" height="44px" colspan="3">
-						        <div class="spanCapt">&nbsp;{f_lower(day.day_name)}</div>
-					        </td>
-					      </tr>
-                <tr>
-                  <td class="tdPair_3" align="left" valign="middle" height="177px" colspan="3">
-                    <div className="no-lessons">Занятий нет</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="tdPair_4" align="center" valign="middle" height="20px" colspan="3">{formatDate(day.date)}</td>
-                </tr>
-              </tbody>
-            </table>
-          ) : (
-            <table cellpadding="0px" cellspacing="0px" class="dayTable">
-              <tbody>
-                <tr>
-                  <td class="tdCapt" align="left" valign="middle" height="44px" colspan="3">
-						        <div class="spanCapt">&nbsp;{f_lower(day.day_name)}</div>
-					        </td>
-					      </tr>
- 
-                {day.lessons.map((lesson) => (
-                  <tr key={lesson.lesson_number}>
-                    <td class="tdPair_1" align="center" valign="middle">{lesson.lesson_number}</td>
-                    <td class="tdPair_2" align="center" valign="middle">08:00 09:55</td>
-                    <td class="tdPair_3" align="left" valign="middle">{lesson.subject}<br /><span class="prepod">{lesson.teacher}</span></td>
-                  </tr>
-                ))}
-                <tr>
-                  <td class="tdPair_4" align="center" valign="middle" height="20px" colspan="3">{formatDate(day.date)}</td>
-                </tr>
-              </tbody>
-            </table>
-          )}
+    <>
+      <div className="schedule-header">
+        <div className="schedule-header-info">
+          {lastUpdated && <span className="schedule-last-updated">Обновлено: {lastUpdated}</span>}
+          <span className="schedule-countdown">Обновление через: {formatCountdown(countdown)}</span>
         </div>
-      ))}
-    </div>
+        <button type="button" className="logout-button" onClick={handleLogout}>
+          Сменить ключ
+        </button>
+      </div>
+
+      <div class="schedReS">
+        {scheduleData.map((day) => (
+          <div key={day.date} className="day-container">
+
+            {day.lessons.length === 0 ? (
+              <table cellpadding="0px" cellspacing="0px" class="dayTable">
+                <tbody>
+                  <tr>
+                    <td class="tdCapt" align="left" valign="middle" height="44px" colspan="3">
+                      <div class="spanCapt">&nbsp;{f_lower(day.day_name)}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tdPair_3" align="left" valign="middle" height="177px" colspan="3">
+                      <div className="no-lessons">Занятий нет</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tdPair_4" align="center" valign="middle" height="20px" colspan="3">{formatDate(day.date)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            ) : (
+              <table cellpadding="0px" cellspacing="0px" class="dayTable">
+                <tbody>
+                  <tr>
+                    <td class="tdCapt" align="left" valign="middle" height="44px" colspan="3">
+                      <div class="spanCapt">&nbsp;{f_lower(day.day_name)}</div>
+                    </td>
+                  </tr>
+
+                  {day.lessons.map((lesson) => (
+                    <tr key={lesson.lesson_number}>
+                      <td class="tdPair_1" align="center" valign="middle">{lesson.lesson_number}</td>
+                      <td class="tdPair_2" align="center" valign="middle">08:00 09:55</td>
+                      <td class="tdPair_3" align="left" valign="middle">{lesson.subject}<br /><span class="prepod">{lesson.teacher}</span></td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td class="tdPair_4" align="center" valign="middle" height="20px" colspan="3">{formatDate(day.date)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 

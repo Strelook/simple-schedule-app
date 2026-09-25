@@ -189,3 +189,49 @@
     outline-offset: 2px;
   }
 }
+
+/* Шапка основного экрана расписания */
+.schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 6px 4px;
+}
+
+.schedule-header-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.schedule-last-updated {
+  color: var(--color-blue);
+}
+
+.schedule-countdown {
+  color: var(--body-color);
+  opacity: 0.7;
+}
+
+.logout-button {
+  font-family: GOST_type_B, system-ui, sans-serif;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--color-gray);
+  background-color: transparent;
+  color: var(--body-color);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+
+.logout-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: var(--accent-bg);
+}
