@@ -48,13 +48,3 @@ export function getApiKey() {
 export function clearApiKey() {
   localStorage.removeItem(STORAGE_KEY);
 }
-
-/**
- * Является ли HTTP-статус авторизационной ошибкой:
- * 401 — ключ отсутствует, 403 — ключ неверный или отклонён сервером.
- * @param {number} status
- * @returns {boolean}
- */
-export function isAuthError(status) {
-  return status === 401 || status === 403;
-}

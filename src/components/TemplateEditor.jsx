@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './TemplateEditor.css';
-import { apiGet, apiPost } from './api.js';
-import { isAuthError } from './auth.js';
+import { apiGet, apiPost, isAuthError } from '../lib/api.js';
 
 // Дни недели: 1 - Понедельник ... 7 - Воскресенье
 const DAYS = [
@@ -194,9 +193,7 @@ export default function TemplateEditor({ apiKey, onBack, onAuthFailure }) {
             ← К расписанию
           </button>
         </div>
-        <p style={{ color: 'red', fontWeight: 'bold' }}>
-          Не удалось загрузить шаблон: {loadError}
-        </p>
+        <p className="template-error">Не удалось загрузить шаблон: {loadError}</p>
       </div>
     );
   }

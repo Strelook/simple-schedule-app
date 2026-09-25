@@ -3,6 +3,16 @@
 export const API_BASE_URL = 'https://simple-schedule-api.soltusaa.ru';
 
 /**
+ * Является ли HTTP-статус авторизационной ошибкой:
+ * 401 — ключ отсутствует, 403 — ключ неверный или отклонён сервером.
+ * @param {number} status
+ * @returns {boolean}
+ */
+export function isAuthError(status) {
+  return status === 401 || status === 403;
+}
+
+/**
  * Ошибка запроса к API. Содержит HTTP-статус ответа.
  */
 export class ApiError extends Error {

@@ -80,6 +80,12 @@
   font-weight: bold;
 }
 
+/* Сообщение об ошибке загрузки шаблона */
+.template-error {
+  color: red;
+  font-weight: bold;
+}
+
 /* Сетка дней: дни идут строго друг под другом при любой ширине окна */
 .template-grid {
   display: grid;

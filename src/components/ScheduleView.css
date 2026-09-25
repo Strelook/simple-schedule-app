@@ -1,0 +1,118 @@
+/* Экран расписания на неделю */
+
+/* Таблицы дней расписания */
+.tdCapt {
+  width: 50px;
+  height: 34px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.spanCapt {
+  border-left: 2px solid red;
+}
+
+.tdPair_1 {
+  width: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray);
+  font-size: 13px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.tdPair_2 {
+  width: 110px;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray);
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.tdPair_3 {
+  width: 110px;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray);
+  font-size: 13px;
+  padding: 2px 4px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Ячейка дня без занятий — растягивается по высоте */
+.tdPair_3--empty {
+  height: 177px;
+}
+
+.tdPair_4 {
+  border-radius: 4px;
+  border: 1px solid var(--color-gray);
+  font-size: 12px;
+  padding: 2px 4px;
+  background-color: var(--color-gray);
+  height: 20px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.schedReS {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.prepod {
+  font-size: 10px;
+}
+
+.dayTable {
+  margin: 2px;
+  height: 100%;
+  border-collapse: collapse;
+}
+
+/* Шапка основного экрана расписания */
+.schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 6px 4px;
+}
+
+.schedule-header-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.schedule-last-updated {
+  color: var(--color-blue);
+}
+
+.schedule-countdown {
+  color: var(--body-color);
+  opacity: 0.7;
+}
+
+/* Группа кнопок в шапке (редактирование шаблона, смена ключа) */
+.schedule-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Сообщение об ошибке загрузки расписания */
+.schedule-error {
+  color: red;
+  font-weight: bold;
+}

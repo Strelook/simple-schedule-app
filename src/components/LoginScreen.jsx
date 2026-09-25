@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './LoginScreen.css';
-import { apiGet } from './api.js';
+import { apiGet, isAuthError } from '../lib/api.js';
 
 /**
  * Экран авторизации: ввод X-API-Key, проверка ключа реальным
@@ -30,7 +30,7 @@ export default function LoginScreen({ onSuccess }) {
       await apiGet('/schedule/current-week', trimmedKey);
       onSuccess(trimmedKey);
     } catch (err) {
-      if (err.status === 401 || err.status === 403) {
+      if (isAuthError(err.status)) {
         setError('Неверный X-API-Key. Проверьте ключ и попробуйте снова.');
       } else {
         setError(`Не удалось проверить ключ: ${err.message}`);
