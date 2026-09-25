@@ -3,6 +3,7 @@ import './Schedule.css';
 import { getApiKey, saveApiKey, clearApiKey, isAuthError } from './auth.js';
 import { apiGet } from './api.js';
 import LoginScreen from './LoginScreen.jsx';
+import TemplateEditor from './TemplateEditor.jsx';
 
 // Задаем интервал обновления в секундах (5 минут = 300 секунд)
 const UPDATE_INTERVAL_SEC = 300;
@@ -19,12 +20,16 @@ function App() {
   // Состояние для обратного отсчета (в секундах)
   const [countdown, setCountdown] = useState(UPDATE_INTERVAL_SEC);
 
+  // Текущий экран: 'schedule' — расписание, 'template' — редактор шаблона
+  const [view, setView] = useState('schedule');
+
   const isAuthed = Boolean(apiKey);
 
   // Успешный вход: сохраняем ключ на 30 дней и показываем расписание
   const handleLogin = (key) => {
     saveApiKey(key);
     setApiKeyState(key);
+    setView('schedule');
   };
 
   // Выход по кнопке пользователя
@@ -33,6 +38,7 @@ function App() {
     setApiKeyState(null);
     setScheduleData([]);
     setError(null);
+    setView('schedule');
   };
 
   // Сброс авторизации: ключ не подходит (401/403) или истёк
@@ -41,6 +47,7 @@ function App() {
     setApiKeyState(null);
     setScheduleData([]);
     setError(null);
+    setView('schedule');
   };
 
   // Функция запроса к серверу
@@ -117,6 +124,17 @@ function App() {
     return <LoginScreen onSuccess={handleLogin} />;
   }
 
+  // Редактор шаблона расписания на неделю
+  if (view === 'template') {
+    return (
+      <TemplateEditor
+        apiKey={apiKey}
+        onBack={() => setView('schedule')}
+        onAuthFailure={handleAuthFailure}
+      />
+    );
+  }
+
   if (loading) {
     return (
       <div className="schedule-container">
@@ -140,9 +158,14 @@ function App() {
           {lastUpdated && <span className="schedule-last-updated">Обновлено: {lastUpdated}</span>}
           <span className="schedule-countdown">Обновление через: {formatCountdown(countdown)}</span>
         </div>
-        <button type="button" className="logout-button" onClick={handleLogout}>
-          Сменить ключ
-        </button>
+        <div className="schedule-header-actions">
+          <button type="button" className="logout-button" onClick={() => setView('template')}>
+            Редактировать шаблон
+          </button>
+          <button type="button" className="logout-button" onClick={handleLogout}>
+            Сменить ключ
+          </button>
+        </div>
       </div>
 
       <div class="schedReS">

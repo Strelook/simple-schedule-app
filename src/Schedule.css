@@ -235,3 +235,11 @@
   color: var(--accent);
   background-color: var(--accent-bg);
 }
+
+/* Группа кнопок в шапке (редактирование шаблона, смена ключа) */
+.schedule-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
