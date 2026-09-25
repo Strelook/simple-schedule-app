@@ -1,38 +1,48 @@
-    @font-face 
+    /* ГОСТ 2.304-81 type B — основной шрифт приложения (Regular, weight 400) */
+    @font-face
     {
-        font-family: 'GOST_type_B'; 
-        src: url("./fonts/Lato-Light.woff"); /* Montserrat_Black Lato-Light Montserrat*/
+        font-family: 'GOST_type_B';
+        src: url("./fonts/GOST_type_B.woff") format("woff");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
     }
     
-    @font-face 
+    @font-face
     {
-        font-family: 'Montserrat'; 
-        src: url("./fonts/Montserrat-Light.woff"); 
+        font-family: 'Montserrat';
+        src: url("./fonts/Montserrat-Light.woff") format("woff");
+        font-weight: 300;
+        font-style: normal;
+        font-display: swap;
     }
     
-    @font-face 
+    @font-face
     {
-        font-family: 'MontserratExtra'; 
-        src: url("./fonts/Montserrat-ExtraLight.woff"); 
+        font-family: 'MontserratExtra';
+        src: url("./fonts/Montserrat-ExtraLight.woff") format("woff");
+        font-weight: 200;
+        font-style: normal;
+        font-display: swap;
     }
     
-    @font-face 
+    @font-face
     {
-        font-family: 'MontserratBold'; 
-        src: url("./fonts/Montserrat-Bold.woff"); 
+        font-family: 'MontserratBold';
+        src: url("./fonts/Montserrat-Bold.woff") format("woff");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
     }
     
-    @font-face 
+    @font-face
     {
-        font-family: 'MontserratExtraBold'; 
-        src: url("./fonts/Montserrat-SemiBold.woff"); 
-    }    
-    
-    @font-face 
-    {
-        font-family: 'webdings'; 
-        src: url("./fonts/webdings.woff"); 
-    } 
+        font-family: 'MontserratExtraBold';
+        src: url("./fonts/Montserrat-ExtraBold.woff") format("woff");
+        font-weight: 800;
+        font-style: normal;
+        font-display: swap;
+    }
         
     @media screen and (prefers-color-scheme: dark) 
     {
