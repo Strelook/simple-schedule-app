@@ -136,7 +136,7 @@
     }
     
     .tdPair_2 {
-        width: 40px; aheight: 34px;
+        width: 110px; aheight: 34px;
         border-radius: 4px;
         border: 1px solid var(--color-gray);
         afont-family: var(--bs-font-sans-serif);

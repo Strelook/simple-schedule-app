@@ -8,6 +8,25 @@ import TemplateEditor from './TemplateEditor.jsx';
 // Задаем интервал обновления в секундах (5 минут = 300 секунд)
 const UPDATE_INTERVAL_SEC = 300;
 
+// Примерное время занятий по номеру урока.
+// Урок длится 45 минут, перемена 15 минут, после 3-го урока большая перемена 20 минут.
+// Пока используется шаблонный вариант до появления реальных данных о времени.
+const LESSON_TIMES = {
+  1: '08:30 – 09:15',
+  2: '09:30 – 10:15',
+  3: '10:30 – 11:15',
+  4: '11:35 – 12:20',
+  5: '12:35 – 13:20',
+  6: '13:35 – 14:20',
+  7: '14:35 – 15:20',
+  8: '15:35 – 16:20',
+  9: '16:35 – 17:20',
+  10: '17:35 – 18:20',
+};
+
+// Возвращает время урока по его номеру (пустая строка, если номер не определён)
+const getLessonTime = (lessonNumber) => LESSON_TIMES[lessonNumber] ?? '';
+
 function App() {
   // X-API-Key из localStorage (с учётом срока действия 30 дней)
   const [apiKey, setApiKeyState] = useState(() => getApiKey());
@@ -202,7 +221,7 @@ function App() {
                   {day.lessons.map((lesson) => (
                     <tr key={lesson.lesson_number}>
                       <td class="tdPair_1" align="center" valign="middle">{lesson.lesson_number}</td>
-                      <td class="tdPair_2" align="center" valign="middle">08:00 09:55</td>
+                      <td class="tdPair_2" align="center" valign="middle">{getLessonTime(lesson.lesson_number)}</td>
                       <td class="tdPair_3" align="left" valign="middle">{lesson.subject}<br /><span class="prepod">{lesson.teacher}</span></td>
                     </tr>
                   ))}
