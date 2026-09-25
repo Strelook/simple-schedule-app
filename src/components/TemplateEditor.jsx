@@ -1,21 +1,7 @@
 import { useEffect, useState } from 'react';
 import './TemplateEditor.css';
 import { apiGet, apiPost, isAuthError } from '../lib/api.js';
-
-// Дни недели: 1 - Понедельник ... 7 - Воскресенье
-const DAYS = [
-  { number: 1, name: 'Понедельник' },
-  { number: 2, name: 'Вторник' },
-  { number: 3, name: 'Среда' },
-  { number: 4, name: 'Четверг' },
-  { number: 5, name: 'Пятница' },
-  { number: 6, name: 'Суббота' },
-  { number: 7, name: 'Воскресенье' },
-];
-
-// Счётчик локальных ключей строк (для React-списков)
-let rowCounter = 0;
-const nextRowKey = () => `row-${++rowCounter}`;
+import { DAYS, buildTemplatePayload, nextRowKey, normalizeTemplate } from '../utils/template.js';
 
 /**
  * Экран редактирования базового недельного шаблона расписания.
@@ -48,25 +34,7 @@ export default function TemplateEditor({ apiKey, onBack, onAuthFailure }) {
       setLoadError(null);
       try {
         const items = await apiGet('/schedule/template', apiKey);
-
-        const byDay = {};
-        for (const day of DAYS) byDay[day.number] = [];
-
-        for (const item of items) {
-          const list = byDay[item.day_of_week];
-          if (!list) continue; // игнорируем некорректные day_of_week
-          list.push({
-            key: nextRowKey(),
-            lesson_number: item.lesson_number,
-            subject: item.subject ?? '',
-            classroom: item.classroom ?? '',
-            teacher: item.teacher ?? '',
-          });
-        }
-
-        for (const day of DAYS) {
-          byDay[day.number].sort((a, b) => a.lesson_number - b.lesson_number);
-        }
+        const byDay = normalizeTemplate(items);
 
         if (!cancelled) setDays(byDay);
       } catch (err) {
@@ -128,33 +96,7 @@ export default function TemplateEditor({ apiKey, onBack, onAuthFailure }) {
 
   // Сборка payload и отправка POST /schedule/template
   const handleSave = async () => {
-    const payload = [];
-    let hasDuplicate = false;
-
-    for (const day of DAYS) {
-      const rows = days[day.number];
-      const seen = new Set();
-
-      for (const row of rows) {
-        const subject = row.subject.trim();
-        if (!subject) continue; // пустые строки не отправляем
-
-        if (seen.has(row.lesson_number)) {
-          hasDuplicate = true;
-          break;
-        }
-        seen.add(row.lesson_number);
-
-        payload.push({
-          day_of_week: day.number,
-          lesson_number: row.lesson_number,
-          subject,
-          classroom: row.classroom.trim() || null,
-          teacher: row.teacher.trim() || null,
-        });
-      }
-      if (hasDuplicate) break;
-    }
+    const { payload, hasDuplicate } = buildTemplatePayload(days);
 
     if (hasDuplicate) {
       setSaveStatus({ type: 'error', text: 'В одном дне не может быть уроков с одинаковым номером.' });

@@ -1,5 +1,5 @@
 import './ScheduleView.css';
-import { formatCountdown, formatDate, getLessonTime } from '../lib/schedule.js';
+import { formatCountdown, formatDate, getLessonTime } from '../utils/schedule.js';
 
 /**
  * Экран расписания на неделю: шапка с информацией об обновлении
