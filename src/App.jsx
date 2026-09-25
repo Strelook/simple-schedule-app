@@ -103,38 +103,33 @@ function App() {
   }
 
   return (
-    <div className="schedule-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '10px' }}>
-        <h2>Расписание занятий</h2>
-        
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          {/* Визуальный таймер обратного отсчета */}
-          <span style={{ fontSize: '0.85rem', color: '#0f766e', backgroundColor: '#ccfbf1', padding: '4px 8px', borderRadius: '4px', fontWeight: '600' }}>
-            До обновления: {formatCountdown(countdown)}
-          </span>
-          
-          {lastUpdated && (
-            <span style={{ fontSize: '0.85rem', color: '#64748b', backgroundColor: '#f1f5f9', padding: '4px 8px', borderRadius: '4px' }}>
-              Обновлено в: {lastUpdated}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {error && (
-        <div style={{ color: '#b91c1c', backgroundColor: '#fee2e2', padding: '10px', borderRadius: '4px', marginBottom: '15px', border: '1px solid #fca5a5' }}>
-          Внимание: не удалось обновить данные по таймеру ({error}). Отображается предыдущая копия.
-        </div>
-      )}
-
+   
+    <div class="schedReS">
+      
       {scheduleData.map((day) => (
         <div key={day.date} className="day-container">
 
 
           {day.lessons.length === 0 ? (
-            <div className="no-lessons">Занятий нет</div>
+            <table cellpadding="0px" cellspacing="0px" class="dayTable">
+              <tbody>
+                <tr>
+                  <td class="tdCapt" align="left" valign="middle" height="44px" colspan="3">
+						        <div class="spanCapt">&nbsp;{f_lower(day.day_name)}</div>
+					        </td>
+					      </tr>
+                <tr>
+                  <td class="tdPair_3" align="left" valign="middle" height="177px" colspan="3">
+                    <div className="no-lessons">Занятий нет</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="tdPair_4" align="center" valign="middle" height="20px" colspan="3">{formatDate(day.date)}</td>
+                </tr>
+              </tbody>
+            </table>
           ) : (
-            <table>
+            <table cellpadding="0px" cellspacing="0px" class="dayTable">
               <tbody>
                 <tr>
                   <td class="tdCapt" align="left" valign="middle" height="44px" colspan="3">
@@ -151,7 +146,7 @@ function App() {
                 ))}
                 <tr>
                   <td class="tdPair_4" align="center" valign="middle" height="20px" colspan="3">{formatDate(day.date)}</td>
-              </tr>
+                </tr>
               </tbody>
             </table>
           )}

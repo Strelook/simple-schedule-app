@@ -135,6 +135,7 @@
     }
     .trPair_1 {
         background-color: var(--color-gray);
+        background-color: red;
     }
     
     .tdPair_1 {

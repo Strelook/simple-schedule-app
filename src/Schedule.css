@@ -1,58 +1,37 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
-     
-        
- 
     @font-face 
     {
         font-family: 'GOST_type_B'; 
-        src: url("../fonts/Lato-Light.woff"); /* Montserrat_Black Lato-Light Montserrat*/
+        src: url("./fonts/Lato-Light.woff"); /* Montserrat_Black Lato-Light Montserrat*/
     }
     
     @font-face 
     {
         font-family: 'Montserrat'; 
-        src: url("../fonts/Montserrat-Light.woff"); 
+        src: url("./fonts/Montserrat-Light.woff"); 
     }
     
     @font-face 
     {
         font-family: 'MontserratExtra'; 
-        src: url("../fonts/Montserrat-ExtraLight.woff"); 
+        src: url("./fonts/Montserrat-ExtraLight.woff"); 
     }
     
     @font-face 
     {
         font-family: 'MontserratBold'; 
-        src: url("../fonts/Montserrat-Bold.woff"); 
+        src: url("./fonts/Montserrat-Bold.woff"); 
     }
     
     @font-face 
     {
         font-family: 'MontserratExtraBold'; 
-        src: url("../fonts/Montserrat-SemiBold.woff"); 
+        src: url("./fonts/Montserrat-SemiBold.woff"); 
     }    
     
     @font-face 
     {
         font-family: 'webdings'; 
-        src: url("../fonts/webdings.woff"); 
+        src: url("./fonts/webdings.woff"); 
     } 
         
     @media screen and (prefers-color-scheme: dark) 
@@ -191,3 +170,22 @@
         height: 100%; 
         border-collapse: collapse;
     }
+
+.counter {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+  margin-bottom: 24px;
+
+  &:hover {
+    border-color: var(--accent-border);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
