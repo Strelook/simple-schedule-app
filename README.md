@@ -1,16 +1,105 @@
-# React + Vite
+# Расписание занятий
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Веб-приложение для просмотра и редактирования школьного расписания занятий одного класса. Фронтенд работает с внешним API, которое хранит расписание и шаблон недели, а интерфейс отображает их и позволяет вносить изменения.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Просмотр расписания на текущую неделю** — по дням недели: номер урока, время, предмет и преподаватель.
+- **Автообновление** — расписание автоматически обновляется каждые 5 минут, рядом показывается время последнего обновления и обратный отсчёт до следующего.
+- **Редактор недельного шаблона** — добавление, удаление и редактирование уроков по дням недели: предмет, кабинет, преподаватель.
+- **Защита ключом доступа** — вход по `X-API-Key`, который проверяется реальным запросом к API и сохраняется в браузере на 30 дней.
+- **Обработка ошибок** — понятные сообщения при недоступности сервера, неверном ключе или проблемах сохранения.
 
-## React Compiler
+## Технологии
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [React](https://react.dev/) 19
+- [Vite](https://vite.dev/) 8
+- [Oxlint](https://oxc.rs/) — линтер
+- Обычный CSS (без UI-фреймворков)
 
-## Expanding the Oxlint configuration
+## Как это работает
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Приложение состоит из трёх экранов, переключение между которыми управляется корневым компонентом [`App`](src/App.jsx):
+
+| Экран | Компонент | Описание |
+| --- | --- | --- |
+| Вход | [`LoginScreen`](src/components/LoginScreen.jsx) | Ввод `X-API-Key`, проверка ключа запросом к API |
+| Расписание | [`ScheduleView`](src/components/ScheduleView.jsx) | Недельное расписание с автообновлением |
+| Редактор шаблона | [`TemplateEditor`](src/components/TemplateEditor.jsx) | Правка базового шаблона недели |
+
+Данные загружаются из API **Simple schedule API** (`https://simple-schedule-api.soltusaa.ru`):
+
+| Метод | Эндпоинт | Назначение |
+| --- | --- | --- |
+| `GET` | `/schedule/current-week` | Расписание текущей недели |
+| `GET` | `/schedule/template` | Недельный шаблон для редактирования |
+| `POST` | `/schedule/template` | Сохранение шаблона (полная перезапись) |
+
+Все запросы отправляются с заголовком `X-API-Key`. Ответы с кодом `401`/`403` считаются ошибкой авторизации — в этом случае приложение сбрасывает ключ и возвращает пользователя на экран входа.
+
+### Особенности реализации
+
+- **Хранение ключа** — модуль [`auth.js`](src/lib/auth.js) сохраняет ключ в `localStorage` со сроком действия 30 дней; по истечении срока он автоматически удаляется.
+- **Клиент API** — [`api.js`](src/lib/api.js) оборачивает `fetch`: добавляет заголовки, разбирает JSON, превращает HTTP-ошибки в `ApiError` с понятным текстом сообщения.
+- **Автообновление** — хук [`useSchedule`](src/hooks/useSchedule.js) загружает расписание при входе, затем обновляет его каждые 300 секунд; отсчёт ведётся ежесекундно, а обновление выполняется «тихо», без индикатора загрузки.
+- **Чистые утилиты** — время уроков (урок 45 минут, перемена 15, после третьего урока — большая 20), форматирование даты и отсчёта вынесены в [`schedule.js`](src/utils/schedule.js); работа с шаблоном (нормализация ответа API, сборка payload при сохранении) — в [`template.js`](src/utils/template.js).
+
+## Быстрый старт
+
+Требования: Node.js и npm.
+
+```bash
+# Установка зависимостей
+npm install
+
+# Запуск в режиме разработки (http://localhost:5173)
+npm run dev
+
+# Сборка продакшн-версии (в папку dist/)
+npm run build
+
+# Проверка кода линтером
+npm run lint
+
+# Локальный предпросмотр собранной версии
+npm run preview
+```
+
+## Использование
+
+1. Откройте приложение — появится экран входа.
+2. Введите `X-API-Key`, выданный для доступа к API. Ключ будет проверен запросом к серверу и сохранён в браузере на 30 дней.
+3. На экране расписания доступны кнопки:
+   - **Редактировать шаблон** — открывает редактор недельного шаблона (уроки, кабинеты, преподаватели);
+   - **Сменить ключ** — выйти и ввести другой ключ.
+4. В редакторе шаблона изменения применяются кнопкой **Сохранить шаблон**: сохранение полностью перезаписывает текущий шаблон недели. Уроки без названия предмета при сохранении пропускаются, дубли номеров уроков в одном дне не допускаются.
+
+## Структура проекта
+
+```
+schedule-app/
+├── index.html                  # Точка входа HTML
+├── package.json                # Скрипты и зависимости
+├── vite.config.js              # Конфигурация Vite
+├── .oxlintrc.json              # Правила линтера
+└── src/
+    ├── main.jsx                # Монтирование React-приложения
+    ├── App.jsx                 # Корневой компонент: авторизация и маршрутизация экранов
+    ├── index.css               # Глобальные стили
+    ├── components/
+    │   ├── LoginScreen.jsx     # Экран входа по X-API-Key
+    │   ├── ScheduleView.jsx    # Отображение расписания недели
+    │   └── TemplateEditor.jsx  # Редактор недельного шаблона
+    ├── hooks/
+    │   └── useSchedule.js      # Загрузка и автообновление расписания
+    ├── lib/
+    │   ├── api.js              # HTTP-клиент Simple schedule API
+    │   └── auth.js             # Хранение API-ключа в localStorage
+    └── utils/
+        ├── schedule.js         # Время уроков, форматирование дат и отсчёта
+        └── template.js         # Нормализация и сборка данных шаблона
+```
+
+## Настройка
+
+Адрес API задан константой `API_BASE_URL` в [`src/lib/api.js`](src/lib/api.js). Для работы с другим сервером достаточно изменить её значение.
