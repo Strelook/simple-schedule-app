@@ -1,0 +1,242 @@
+/* Экран редактирования недельного шаблона расписания */
+
+.template-editor {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 12px 40px;
+  font-family: GOST_type_B, system-ui, sans-serif;
+}
+
+.template-editor-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 4px 4px;
+}
+
+.template-editor-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.template-editor-heading {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--body-color);
+}
+
+.template-editor-hint {
+  font-size: 13px;
+  opacity: 0.7;
+  color: var(--body-color);
+}
+
+.template-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.template-save-button {
+  font-family: GOST_type_B, system-ui, sans-serif;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--color-blue);
+  background-color: var(--color-blue);
+  color: #f8f9d0;
+  cursor: pointer;
+  transition: filter 0.2s, opacity 0.2s;
+}
+
+.template-save-button:hover {
+  filter: brightness(1.1);
+}
+
+.template-save-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.template-save-status {
+  margin: 10px 4px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.template-save-status--ok {
+  border: 1px solid var(--color-blue);
+  color: var(--color-blue);
+}
+
+.template-save-status--error {
+  border: 1px solid red;
+  color: red;
+  font-weight: bold;
+}
+
+/* Сообщение об ошибке загрузки шаблона */
+.template-error {
+  color: red;
+  font-weight: bold;
+}
+
+/* Сетка дней: дни идут строго друг под другом при любой ширине окна */
+.template-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.template-day {
+  border: 1px solid var(--color-gray);
+  border-radius: 6px;
+  background-color: var(--findCell_1);
+  padding: 8px;
+}
+
+.template-day-name {
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  padding: 4px 0 8px;
+  color: var(--body-color);
+  border-bottom: 2px solid var(--schedReSname);
+  margin-bottom: 8px;
+}
+
+/* Таблица уроков */
+.template-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.template-table th {
+  font-size: 11px;
+  font-weight: bold;
+  opacity: 0.75;
+  color: var(--body-color);
+  text-align: left;
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--color-gray);
+}
+
+.template-th-num {
+  width: 80px;
+}
+
+.template-th-subject {
+  width: 34%;
+}
+
+.template-th-classroom {
+  width: 22%;
+}
+
+.template-th-teacher {
+  width: 30%;
+}
+
+.template-th-del {
+  width: 28px;
+}
+
+.template-table td {
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--color-gray);
+  vertical-align: middle;
+}
+
+.template-td-num {
+  width: 80px;
+}
+
+.template-td-del {
+  width: 28px;
+  text-align: center;
+}
+
+.template-empty {
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.6;
+  padding: 10px 4px;
+  color: var(--body-color);
+}
+
+/* Поля ввода */
+.template-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: GOST_type_B, system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--body-color);
+  background-color: var(--body-background-color);
+  border: 1px solid var(--color-gray);
+  border-radius: 4px;
+  padding: 4px 6px;
+}
+
+.template-input:focus {
+  outline: none;
+  border-color: var(--color-blue);
+}
+
+.template-input-num {
+  text-align: center;
+  font-size: 14px;
+  /* Скрываем стандартные стрелки number-input, чтобы не съедали место */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.template-input-num::-webkit-outer-spin-button,
+.template-input-num::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.template-row-delete {
+  font-family: GOST_type_B, system-ui, sans-serif;
+  font-size: 12px;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+  border-radius: 4px;
+  border: 1px solid var(--color-gray);
+  background-color: transparent;
+  color: var(--body-color);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.template-row-delete:hover {
+  border-color: red;
+  color: red;
+}
+
+.template-add-row {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  font-family: GOST_type_B, system-ui, sans-serif;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  border: 1px dashed var(--color-gray);
+  background-color: transparent;
+  color: var(--body-color);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.template-add-row:hover {
+  border-color: var(--color-blue);
+  color: var(--color-blue);
+}
